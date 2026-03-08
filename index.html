@@ -1,1088 +1,515 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARS — Bibliothèque d'Art Plastique</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARS — Bibliothèque d'Art</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-    :root {
-      --bg: #0a0905;
-      --surface: #12100c;
-      --card-bg: #1c1912;
-      --card-border: #2e2a22;
-      --gold: #c9a85c;
-      --gold-dim: #8a7040;
-      --cream: #f0e8d5;
-      --cream-dim: #a09070;
-      --text: #e8ddc8;
-      --text-dim: #7a7060;
-      --tag-bg: #1e1c16;
-      --tag-border: #3a3628;
-      --red-accent: #8b3a2a;
-    }
+:root{
+  --bg1:#f0eee8;--bg2:#e8e4f0;--bg3:#e4eef0;
+  --glass:rgba(255,255,255,0.62);
+  --glass-border:rgba(255,255,255,0.85);
+  --glass-shadow:rgba(160,140,200,0.18);
+  --accent:#7c6fcd;--accent2:#5ba3c9;--accent3:#c97c9a;
+  --text:#1a1825;--text2:#6b6580;--text3:#9b94b0;
+  --tag-bg:rgba(124,111,205,0.1);--tag-border:rgba(124,111,205,0.25);
+}
 
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      overflow: hidden;
-    }
+html,body{height:100%;overflow:hidden;
+  background:linear-gradient(135deg,#f5f0ff 0%,#e8f4fd 35%,#fdf0f5 65%,#f0f8ee 100%);
+  font-family:'Inter',system-ui,sans-serif;color:var(--text);
+}
 
-    /* ── HEADER ── */
-    header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 36px;
-      background: linear-gradient(to bottom, rgba(10,9,5,0.98) 80%, transparent);
-      gap: 24px;
-    }
+/* animated bg blobs */
+.bg-blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.35;pointer-events:none;z-index:0}
+.b1{width:600px;height:600px;top:-100px;left:-150px;background:radial-gradient(circle,#c8bfff,transparent 70%);animation:blob1 18s ease-in-out infinite}
+.b2{width:500px;height:500px;top:40%;right:-100px;background:radial-gradient(circle,#b8dff5,transparent 70%);animation:blob2 22s ease-in-out infinite}
+.b3{width:400px;height:400px;bottom:-80px;left:30%;background:radial-gradient(circle,#ffc8df,transparent 70%);animation:blob3 15s ease-in-out infinite}
+@keyframes blob1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,30px) scale(1.08)}}
+@keyframes blob2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,20px) scale(0.95)}}
+@keyframes blob3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-40px) scale(1.05)}}
 
-    .logo {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      color: var(--gold);
-      text-transform: uppercase;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .logo span {
-      color: var(--cream-dim);
-      font-size: 11px;
-      font-weight: 400;
-      letter-spacing: 0.3em;
-      display: block;
-      margin-top: -3px;
-    }
+/* HEADER */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 32px;
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(20px) saturate(1.8);
+  -webkit-backdrop-filter:blur(20px) saturate(1.8);
+  border-bottom:1px solid var(--glass-border);
+  gap:20px;
+}
+.logo{font-family:'Playfair Display',Georgia,serif;font-size:19px;font-weight:700;
+  color:var(--accent);letter-spacing:0.15em;white-space:nowrap;flex-shrink:0}
+.logo small{display:block;font-family:'Inter',sans-serif;font-size:9px;font-weight:300;
+  letter-spacing:0.3em;color:var(--text3);margin-top:-1px;text-transform:uppercase}
 
-    .search-bar {
-      flex: 1;
-      max-width: 420px;
-      position: relative;
-    }
-    .search-bar input {
-      width: 100%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--card-border);
-      border-radius: 2px;
-      padding: 9px 40px 9px 16px;
-      color: var(--text);
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .search-bar input::placeholder { color: var(--text-dim); }
-    .search-bar input:focus { border-color: var(--gold-dim); }
-    .search-bar svg {
-      position: absolute;
-      right: 12px; top: 50%;
-      transform: translateY(-50%);
-      opacity: 0.4;
-      pointer-events: none;
-    }
+.search-wrap{flex:1;max-width:360px;position:relative}
+.search-wrap input{
+  width:100%;padding:8px 36px 8px 16px;
+  background:rgba(255,255,255,0.7);
+  border:1px solid var(--glass-border);
+  border-radius:100px;font-family:'Inter',sans-serif;font-size:13px;
+  color:var(--text);outline:none;
+  box-shadow:0 2px 12px rgba(124,111,205,0.1);
+  transition:all .2s;
+}
+.search-wrap input:focus{background:rgba(255,255,255,0.9);box-shadow:0 2px 16px rgba(124,111,205,0.2);border-color:rgba(124,111,205,0.4)}
+.search-wrap input::placeholder{color:var(--text3)}
+.search-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);opacity:0.4;pointer-events:none}
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-    }
+.btn-add{
+  background:var(--accent);color:#fff;border:none;border-radius:100px;
+  padding:8px 18px;font-family:'Inter',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;
+  box-shadow:0 4px 14px rgba(124,111,205,0.35);
+}
+.btn-add:hover{background:#6a5ec0;box-shadow:0 4px 18px rgba(124,111,205,0.5);transform:translateY(-1px)}
 
-    .btn-add {
-      background: var(--gold);
-      color: #0a0905;
-      border: none;
-      border-radius: 2px;
-      padding: 9px 18px;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      transition: background 0.2s;
-      white-space: nowrap;
-    }
-    .btn-add:hover { background: #d9b870; }
+/* FILTERS */
+.filters{
+  position:fixed;top:56px;left:0;right:0;z-index:90;
+  display:flex;align-items:center;gap:6px;padding:8px 32px;
+  background:rgba(255,255,255,0.45);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(255,255,255,0.6);
+  overflow-x:auto;scrollbar-width:none;
+}
+.filters::-webkit-scrollbar{display:none}
+.chip{
+  border:1px solid var(--tag-border);background:rgba(255,255,255,0.6);
+  color:var(--text2);border-radius:100px;padding:4px 13px;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:500;
+  cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;
+}
+.chip:hover{background:rgba(124,111,205,0.12);border-color:rgba(124,111,205,0.4);color:var(--accent)}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px rgba(124,111,205,0.3)}
+.count-label{font-size:11px;color:var(--text3);margin-left:auto;flex-shrink:0;white-space:nowrap;padding-right:4px}
 
-    .counter {
-      font-size: 12px;
-      color: var(--text-dim);
-      letter-spacing: 0.1em;
-    }
+/* STAGE */
+.stage{
+  position:fixed;top:100px;bottom:0;left:0;right:0;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  cursor:grab;user-select:none;
+  z-index:1;
+}
+.stage:active{cursor:grabbing}
+.stage::before,.stage::after{
+  content:'';position:absolute;top:0;bottom:0;width:200px;z-index:20;pointer-events:none;
+}
+.stage::before{left:0;background:linear-gradient(to right,rgba(240,238,248,0.95) 0%,transparent 100%)}
+.stage::after{right:0;background:linear-gradient(to left,rgba(240,238,248,0.95) 0%,transparent 100%)}
 
-    /* ── FILTERS ── */
-    .filters-bar {
-      position: fixed;
-      top: 72px; left: 0; right: 0;
-      z-index: 90;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 36px;
-      background: rgba(10,9,5,0.92);
-      border-bottom: 1px solid var(--card-border);
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .filters-bar::-webkit-scrollbar { display: none; }
+/* TRACK */
+.track{
+  display:flex;align-items:center;
+  position:relative;
+  transition:none;
+  will-change:transform;
+  padding:0 50vw;
+  gap:0;
+}
 
-    .filter-label {
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      color: var(--gold-dim);
-      text-transform: uppercase;
-      white-space: nowrap;
-      margin-right: 4px;
-      flex-shrink: 0;
-    }
+/* CARD WRAPPER */
+.cw{
+  flex-shrink:0;
+  width:680px;
+  padding:0 14px;
+  transition:transform .5s cubic-bezier(.34,1.3,.64,1), opacity .5s ease;
+  position:relative;
+}
 
-    .filter-chip {
-      border: 1px solid var(--tag-border);
-      background: var(--tag-bg);
-      color: var(--cream-dim);
-      border-radius: 2px;
-      padding: 5px 12px;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 13px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.15s;
-      flex-shrink: 0;
-    }
-    .filter-chip:hover { border-color: var(--gold-dim); color: var(--gold); }
-    .filter-chip.active { background: var(--gold); color: #0a0905; border-color: var(--gold); font-weight: 600; }
+/* Book spine effect for side cards */
+.cw.pos-far-left{transform:perspective(1200px) rotateY(42deg) scale(0.55) translateX(60px);opacity:0.35;pointer-events:none}
+.cw.pos-left{transform:perspective(1200px) rotateY(28deg) scale(0.72) translateX(30px);opacity:0.62;pointer-events:auto}
+.cw.pos-active{transform:perspective(1200px) rotateY(0deg) scale(1) translateX(0);opacity:1;pointer-events:auto;z-index:10}
+.cw.pos-right{transform:perspective(1200px) rotateY(-28deg) scale(0.72) translateX(-30px);opacity:0.62;pointer-events:auto}
+.cw.pos-far-right{transform:perspective(1200px) rotateY(-42deg) scale(0.55) translateX(-60px);opacity:0.35;pointer-events:none}
+.cw.pos-hidden{transform:perspective(1200px) rotateY(55deg) scale(0.4);opacity:0;pointer-events:none}
 
-    /* ── CAROUSEL WRAPPER ── */
-    .scene {
-      position: fixed;
-      top: 118px; bottom: 0; left: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
+/* CARD */
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(24px) saturate(1.6);
+  -webkit-backdrop-filter:blur(24px) saturate(1.6);
+  border:1px solid var(--glass-border);
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 8px 40px var(--glass-shadow), 0 1px 0 rgba(255,255,255,0.8) inset;
+  transition:box-shadow .3s;
+}
+.cw.pos-active .card{
+  box-shadow:0 20px 60px rgba(124,111,205,0.2), 0 1px 0 rgba(255,255,255,0.9) inset;
+}
+.cw:not(.pos-active):not(.pos-far-left):not(.pos-far-right):not(.pos-hidden) .card{cursor:pointer}
 
-    .carousel-track {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-      will-change: transform;
-      padding: 0 50vw;
-    }
+/* Image section — landscape in active */
+.card-img{position:relative;overflow:hidden;background:#e8e4f0}
+.cw.pos-active .card-img{height:300px}
+.cw:not(.pos-active) .card-img{height:180px}
+.card-img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;transition:transform .5s ease}
+.cw.pos-active .card-img:hover img{transform:scale(1.04)}
+.img-gradient{position:absolute;inset:0;background:linear-gradient(to top,rgba(20,18,35,0.3) 0%,transparent 60%)}
+.badge{
+  position:absolute;top:12px;left:12px;
+  background:rgba(255,255,255,0.72);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.9);
+  color:var(--accent);font-size:10px;font-weight:500;
+  letter-spacing:0.12em;padding:4px 10px;border-radius:100px;
+  text-transform:uppercase;
+}
+.zoom-btn{
+  position:absolute;bottom:12px;right:12px;
+  background:rgba(255,255,255,0.75);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.9);
+  color:var(--text2);font-size:10px;font-weight:500;
+  padding:5px 11px;border-radius:100px;cursor:pointer;
+  opacity:0;transition:opacity .25s;letter-spacing:0.08em;
+  border:none;
+}
+.cw.pos-active .card-img:hover .zoom-btn{opacity:1}
 
-    /* ── CARDS ── */
-    .card-wrapper {
-      flex-shrink: 0;
-      width: 680px;
-      padding: 0 12px;
-      transition: all 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
-    }
+/* Text section */
+.card-body{padding:16px 20px 14px}
+.card-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+.card-title{font-family:'Playfair Display',Georgia,serif;font-style:italic;color:var(--text);line-height:1.2}
+.cw.pos-active .card-title{font-size:19px}
+.cw:not(.pos-active) .card-title{font-size:15px}
+.card-year{font-size:12px;color:var(--accent);font-weight:500;white-space:nowrap;margin-left:8px}
+.card-artist{font-size:13px;color:var(--text2);margin-bottom:8px}
+.card-artist em{color:var(--text3);font-style:normal;font-size:11px}
+.divider{border:none;border-top:1px solid rgba(124,111,205,0.12);margin:8px 0}
+.card-desc{font-size:13px;line-height:1.65;color:var(--text2);
+  display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden;
+  -webkit-line-clamp:3;
+}
+.cw.pos-active .card-desc{-webkit-line-clamp:4}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.tag{
+  background:var(--tag-bg);border:1px solid var(--tag-border);
+  color:var(--accent);border-radius:100px;padding:2px 9px;
+  font-size:10px;font-weight:500;cursor:pointer;transition:all .15s;
+}
+.tag:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 3px;
-      overflow: hidden;
-      transition: all 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
+/* DOTS */
+.dots{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  z-index:50;display:flex;gap:5px;align-items:center;
+}
+.dot{
+  width:5px;height:5px;border-radius:50%;
+  background:rgba(124,111,205,0.25);cursor:pointer;transition:all .3s;
+}
+.dot.active{background:var(--accent);width:18px;border-radius:3px}
 
-    /* Side cards */
-    .card-wrapper.side {
-      opacity: 0;
-      transform: scale(0.72) translateY(20px);
-      pointer-events: none;
-    }
-    .card-wrapper.near {
-      opacity: 0.55;
-      transform: scale(0.78) translateY(12px);
-      pointer-events: auto;
-    }
-    .card-wrapper.mid {
-      opacity: 0.7;
-      transform: scale(0.85) translateY(6px);
-      pointer-events: auto;
-    }
-    .card-wrapper.active {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-      pointer-events: auto;
-      z-index: 10;
-    }
+/* LIGHTBOX */
+.lb{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(10,8,20,0.85);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;cursor:zoom-out;
+}
+.lb.open{opacity:1;pointer-events:all}
+.lb img{max-width:90vw;max-height:88vh;object-fit:contain;border-radius:12px;box-shadow:0 30px 80px rgba(0,0,0,0.5)}
+.lb-close{position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.2);color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lb-close:hover{background:rgba(255,255,255,0.25)}
+.lb-cap{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.65);font-size:13px;font-style:italic;white-space:nowrap}
 
-    /* Card image section */
-    .card-image-section {
-      position: relative;
-      overflow: hidden;
-      background: #0d0b08;
-    }
-    .card-wrapper.active .card-image-section {
-      height: 320px;
-    }
-    .card-wrapper:not(.active) .card-image-section {
-      height: 240px;
-    }
+/* MODAL */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(10,8,20,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:rgba(255,255,255,0.88);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid var(--glass-border);border-radius:20px;padding:32px 36px;width:480px;max-height:82vh;overflow-y:auto;box-shadow:0 20px 60px rgba(124,111,205,0.2)}
+.modal h2{font-family:'Playfair Display',Georgia,serif;font-size:20px;color:var(--text);margin-bottom:20px}
+.modal h2 span{color:var(--accent);font-style:italic}
+.fr{margin-bottom:14px}
+.fr label{display:block;font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--text3);margin-bottom:5px}
+.fr input,.fr textarea{width:100%;background:rgba(255,255,255,0.8);border:1px solid rgba(124,111,205,0.2);border-radius:10px;padding:9px 13px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.fr input:focus,.fr textarea:focus{border-color:rgba(124,111,205,0.5);background:#fff}
+.fr textarea{resize:vertical;min-height:72px}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn-cancel{background:transparent;border:1px solid rgba(124,111,205,0.25);color:var(--text2);border-radius:100px;padding:8px 18px;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.btn-cancel:hover{border-color:var(--accent);color:var(--accent)}
+.btn-save{background:var(--accent);border:none;color:#fff;border-radius:100px;padding:8px 22px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;box-shadow:0 4px 14px rgba(124,111,205,0.3)}
+.btn-save:hover{background:#6a5ec0}
 
-    .card-image-section img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      display: block;
-      transition: transform 0.6s ease;
-    }
-    .card-wrapper.active .card-image-section:hover img {
-      transform: scale(1.03);
-    }
-
-    .img-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(10,9,5,0.5) 0%, transparent 50%);
-      transition: opacity 0.3s;
-    }
-    .card-wrapper.active .card-image-section:hover .img-overlay {
-      opacity: 0.3;
-    }
-
-    .zoom-hint {
-      position: absolute;
-      bottom: 12px; right: 12px;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid rgba(201,168,92,0.4);
-      color: var(--gold);
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      padding: 5px 10px;
-      border-radius: 2px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      text-transform: uppercase;
-      pointer-events: none;
-    }
-    .card-wrapper.active .card-image-section:hover .zoom-hint { opacity: 1; }
-
-    .movement-badge {
-      position: absolute;
-      top: 12px; left: 12px;
-      background: rgba(0,0,0,0.7);
-      border-left: 2px solid var(--gold);
-      color: var(--cream);
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      padding: 4px 10px;
-      text-transform: uppercase;
-    }
-
-    /* Card text section */
-    .card-text-section {
-      padding: 20px 24px;
-    }
-
-    .card-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 4px;
-    }
-
-    .card-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 20px;
-      font-style: italic;
-      font-weight: 400;
-      color: var(--cream);
-      line-height: 1.2;
-    }
-    .card-wrapper:not(.active) .card-title { font-size: 16px; }
-
-    .card-date {
-      font-size: 13px;
-      color: var(--gold-dim);
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-      margin-left: 12px;
-    }
-
-    .card-artist {
-      font-size: 14px;
-      font-style: italic;
-      color: var(--gold);
-      margin-bottom: 10px;
-      letter-spacing: 0.04em;
-    }
-
-    .card-divider {
-      border: none;
-      border-top: 1px solid var(--card-border);
-      margin: 10px 0;
-    }
-
-    .card-description {
-      font-size: 15px;
-      line-height: 1.7;
-      color: var(--text-dim);
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .card-wrapper.active .card-description {
-      -webkit-line-clamp: 5;
-    }
-
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 14px;
-    }
-
-    .tag {
-      background: var(--tag-bg);
-      border: 1px solid var(--tag-border);
-      color: var(--text-dim);
-      border-radius: 2px;
-      padding: 3px 9px;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .tag:hover { border-color: var(--gold-dim); color: var(--gold); }
-
-    /* ── NAV ARROWS ── */
-    .nav-arrow {
-      position: fixed;
-      top: 50%; transform: translateY(-50%);
-      z-index: 50;
-      background: rgba(12,10,7,0.8);
-      border: 1px solid var(--card-border);
-      color: var(--gold);
-      width: 44px; height: 44px;
-      border-radius: 2px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 20px;
-    }
-    .nav-arrow:hover { background: rgba(201,168,92,0.15); border-color: var(--gold); }
-    .nav-arrow.prev { left: 16px; }
-    .nav-arrow.next { right: 16px; }
-    .nav-arrow:disabled { opacity: 0.2; pointer-events: none; }
-
-    /* ── DOTS ── */
-    .dots {
-      position: fixed;
-      bottom: 16px; left: 50%; transform: translateX(-50%);
-      z-index: 50;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--text-dim);
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    .dot.active {
-      background: var(--gold);
-      width: 22px;
-      border-radius: 3px;
-    }
-
-    /* ── LIGHTBOX ── */
-    .lightbox {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      background: rgba(5,4,2,0.97);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s;
-      cursor: zoom-out;
-    }
-    .lightbox.open { opacity: 1; pointer-events: all; }
-
-    .lightbox img {
-      max-width: 90vw;
-      max-height: 90vh;
-      object-fit: contain;
-      border: 1px solid var(--card-border);
-      transition: transform 0.35s;
-    }
-    .lightbox.open img { transform: scale(1); }
-
-    .lightbox-close {
-      position: absolute;
-      top: 24px; right: 28px;
-      color: var(--gold);
-      font-size: 28px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      line-height: 1;
-      opacity: 0.7;
-      transition: opacity 0.2s;
-    }
-    .lightbox-close:hover { opacity: 1; }
-
-    .lightbox-caption {
-      position: absolute;
-      bottom: 28px; left: 50%; transform: translateX(-50%);
-      text-align: center;
-      color: var(--cream-dim);
-      font-size: 14px;
-      font-style: italic;
-      letter-spacing: 0.05em;
-    }
-
-    /* ── ADD FORM ── */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 300;
-      background: rgba(5,4,2,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-
-    .modal {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 3px;
-      padding: 36px 40px;
-      width: 520px;
-      max-height: 85vh;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: var(--gold-dim) transparent;
-    }
-
-    .modal h2 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 22px;
-      color: var(--cream);
-      margin-bottom: 24px;
-      letter-spacing: 0.02em;
-    }
-    .modal h2 span { color: var(--gold); font-style: italic; }
-
-    .form-row { margin-bottom: 16px; }
-    .form-row label {
-      display: block;
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--gold-dim);
-      margin-bottom: 6px;
-    }
-    .form-row input, .form-row textarea, .form-row select {
-      width: 100%;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--card-border);
-      border-radius: 2px;
-      padding: 10px 14px;
-      color: var(--text);
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .form-row input:focus, .form-row textarea:focus, .form-row select:focus {
-      border-color: var(--gold-dim);
-    }
-    .form-row textarea { resize: vertical; min-height: 80px; }
-    .form-row select option { background: #1c1912; }
-
-    .form-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-      justify-content: flex-end;
-    }
-    .btn-cancel {
-      background: transparent;
-      border: 1px solid var(--card-border);
-      color: var(--text-dim);
-      border-radius: 2px;
-      padding: 9px 20px;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-cancel:hover { border-color: var(--gold-dim); color: var(--cream); }
-    .btn-save {
-      background: var(--gold);
-      border: none;
-      color: #0a0905;
-      border-radius: 2px;
-      padding: 9px 24px;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .btn-save:hover { background: #d9b870; }
-
-    /* ── NO RESULTS ── */
-    .no-results {
-      position: fixed;
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
-      text-align: center;
-      color: var(--text-dim);
-      font-size: 18px;
-      font-style: italic;
-      display: none;
-    }
-    .no-results.show { display: block; }
-
-    /* ── SCROLLBAR ── */
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
-
-    /* Gradient edges */
-    .scene::before, .scene::after {
-      content: '';
-      position: absolute;
-      top: 0; bottom: 0;
-      width: 200px;
-      z-index: 20;
-      pointer-events: none;
-    }
-    .scene::before {
-      left: 0;
-      background: linear-gradient(to right, var(--bg) 0%, transparent 100%);
-    }
-    .scene::after {
-      right: 0;
-      background: linear-gradient(to left, var(--bg) 0%, transparent 100%);
-    }
-
-    @media (max-width: 768px) {
-      .card-wrapper { width: 88vw; }
-      header { padding: 14px 16px; }
-      .filters-bar { padding: 8px 16px; }
-      .search-bar { max-width: 200px; }
-    }
-  </style>
+.no-res{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--text3);font-size:16px;font-style:italic;display:none;z-index:1}
+.no-res.show{display:block}
+</style>
 </head>
 <body>
+<div class="bg-blob b1"></div>
+<div class="bg-blob b2"></div>
+<div class="bg-blob b3"></div>
 
-<!-- HEADER -->
 <header>
-  <div class="logo">
-    ARS
-    <span>Bibliothèque d'Art Plastique</span>
+  <div class="logo">ARS<small>Bibliothèque d'Art Plastique</small></div>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Rechercher œuvre, artiste, courant…" oninput="doSearch()">
+    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
   </div>
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Rechercher une œuvre, un artiste…" oninput="handleSearch()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-    </svg>
-  </div>
-  <div class="header-right">
-    <span class="counter" id="counter"></span>
-    <button class="btn-add" onclick="openModal()">+ Ajouter une fiche</button>
-  </div>
+  <button class="btn-add" onclick="openModal()">+ Ajouter</button>
 </header>
 
-<!-- FILTERS -->
-<div class="filters-bar" id="filtersBar">
-  <span class="filter-label">Courant :</span>
-  <button class="filter-chip active" data-filter="all" onclick="setFilter('all', this)">Toutes les œuvres</button>
+<div class="filters" id="filtersBar">
+  <button class="chip active" data-f="all" onclick="setFilter('all',this)">Toutes</button>
+  <span class="count-label" id="countLabel"></span>
 </div>
 
-<!-- CAROUSEL -->
-<div class="scene">
-  <div class="carousel-track" id="carouselTrack"></div>
+<div class="stage" id="stage">
+  <div class="track" id="track"></div>
 </div>
 
-<!-- NAV -->
-<button class="nav-arrow prev" id="prevBtn" onclick="navigate(-1)">&#8592;</button>
-<button class="nav-arrow next" id="nextBtn" onclick="navigate(1)">&#8594;</button>
-
-<!-- DOTS -->
 <div class="dots" id="dotsBar"></div>
+<div class="no-res" id="noRes">Aucune œuvre trouvée.</div>
 
-<!-- NO RESULTS -->
-<div class="no-results" id="noResults">
-  Aucune œuvre ne correspond à cette recherche.
+<div class="lb" id="lb" onclick="closeLb()">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-cap" id="lbCap"></div>
 </div>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close" onclick="closeLightbox()">×</button>
-  <img id="lightboxImg" src="" alt="">
-  <div class="lightbox-caption" id="lightboxCaption"></div>
-</div>
-
-<!-- ADD MODAL -->
-<div class="modal-overlay" id="modalOverlay">
+<div class="modal-bg" id="modalBg">
   <div class="modal" onclick="event.stopPropagation()">
     <h2>Nouvelle <span>fiche</span></h2>
-    <div class="form-row">
-      <label>Titre de l'œuvre *</label>
-      <input type="text" id="fTitle" placeholder="ex : La Joconde">
-    </div>
-    <div class="form-row">
-      <label>Artiste *</label>
-      <input type="text" id="fArtist" placeholder="ex : Léonard de Vinci">
-    </div>
-    <div class="form-row">
-      <label>Date / Période *</label>
-      <input type="text" id="fDate" placeholder="ex : 1503–1519">
-    </div>
-    <div class="form-row">
-      <label>Courant artistique *</label>
-      <input type="text" id="fMovement" placeholder="ex : Renaissance italienne">
-    </div>
-    <div class="form-row">
-      <label>URL de l'image</label>
-      <input type="text" id="fImage" placeholder="https://…">
-    </div>
-    <div class="form-row">
-      <label>Description</label>
-      <textarea id="fDesc" placeholder="Contexte, technique, analyse de l'œuvre…" rows="4"></textarea>
-    </div>
-    <div class="form-row">
-      <label>Mots-clés (séparés par des virgules)</label>
-      <input type="text" id="fTags" placeholder="ex : portrait, huile sur bois, sfumato">
-    </div>
-    <div class="form-row">
-      <label>Musée / Collection</label>
-      <input type="text" id="fMuseum" placeholder="ex : Musée du Louvre, Paris">
-    </div>
-    <div class="form-actions">
+    <div class="fr"><label>Titre *</label><input id="fT" placeholder="ex : La Joconde"></div>
+    <div class="fr"><label>Artiste *</label><input id="fA" placeholder="ex : Léonard de Vinci"></div>
+    <div class="fr"><label>Date *</label><input id="fD" placeholder="ex : 1503–1519"></div>
+    <div class="fr"><label>Courant artistique *</label><input id="fM" placeholder="ex : Renaissance italienne"></div>
+    <div class="fr"><label>URL image</label><input id="fI" placeholder="https://…"></div>
+    <div class="fr"><label>Description</label><textarea id="fDesc" rows="3"></textarea></div>
+    <div class="fr"><label>Tags (virgules)</label><input id="fTg" placeholder="portrait, huile, couleur…"></div>
+    <div class="fr"><label>Musée</label><input id="fMu" placeholder="ex : Musée du Louvre, Paris"></div>
+    <div class="modal-btns">
       <button class="btn-cancel" onclick="closeModal()">Annuler</button>
-      <button class="btn-save" onclick="saveCard()">Enregistrer la fiche</button>
+      <button class="btn-save" onclick="saveCard()">Enregistrer</button>
     </div>
   </div>
 </div>
 
 <script>
-// ─────────────────────────────────────────────
-// DATA — 10 œuvres d'art avec images Wikimedia
-// ─────────────────────────────────────────────
-const BASE_ARTWORKS = [
-  {
-    id: 1,
-    title: "La Joconde",
-    artist: "Léonard de Vinci",
-    date: "1503 – 1519",
-    movement: "Renaissance italienne",
-    museum: "Musée du Louvre, Paris",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/600px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
-    description: "Portrait d'une femme à mi-corps devant un paysage imaginaire, commandé selon Vasari par Francesco del Giocondo pour célébrer la naissance de leur second fils. De Vinci emploie la technique du sfumato — des transitions imperceptibles entre lumières et ombres — pour créer l'ambiguïté du célèbre sourire. L'œuvre révolutionne le genre du portrait en orientant le modèle vers le spectateur, créant un dialogue intime et universel.",
-    tags: ["portrait", "sfumato", "huile sur bois", "Renaissance", "sourire", "Louvre", "Italie", "femme"]
-  },
-  {
-    id: 2,
-    title: "La Nuit étoilée",
-    artist: "Vincent van Gogh",
-    date: "1889",
-    movement: "Post-impressionnisme",
-    museum: "MoMA, New York",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",
-    description: "Peinte depuis la chambre de l'asile de Saint-Paul-de-Mausole à Saint-Rémy-de-Provence, cette toile représente la vue nocturne depuis la fenêtre de l'artiste avec l'ajout d'un village imaginaire. Les coups de pinceau tourbillonnants, caractéristiques de la période, donnent au ciel un mouvement cosmique presque hallucinatoire. Van Gogh lui-même la trouvait manquée, mais elle est aujourd'hui considérée comme l'une des peintures les plus reconnaissables au monde.",
-    tags: ["nuit", "étoiles", "ciel", "tourbillons", "huile sur toile", "expressionnisme", "Provence", "asile"]
-  },
-  {
-    id: 3,
-    title: "Guernica",
-    artist: "Pablo Picasso",
-    date: "1937",
-    movement: "Cubisme / Art engagé",
-    museum: "Musée Reina Sofía, Madrid",
-    image: "https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg",
-    description: "Commandée pour le Pavillon espagnol de l'Exposition internationale de Paris, cette huile en noir, blanc et gris répond au bombardement de la ville basque de Guernica par l'aviation nazie et fasciste le 26 avril 1937. Composition monumentale (3,49 × 7,76 m), elle fragmente corps humains et animaux en plans cubistes pour exprimer la confusion de l'horreur. Symbole universel de l'anti-guerre, l'œuvre a été exposée dans plusieurs continents avant de rejoindre Madrid en 1981.",
-    tags: ["guerre", "Espagne", "cubisme", "noir et blanc", "bombardement", "tragédie", "politique", "monumental"]
-  },
-  {
-    id: 4,
-    title: "Le Cri",
-    artist: "Edvard Munch",
-    date: "1893",
-    movement: "Expressionnisme / Symbolisme",
-    museum: "Musée National, Oslo",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",
-    description: "Issu d'une série de quatre versions, ce tableau résulte d'une expérience personnelle relatée dans le journal de Munch : lors d'une promenade au coucher du soleil, il ressentit une angoisse intense et perçut le paysage comme un cri infini de la nature. La figure centrale, déshumanisée et aux traits liquéfiés, semble aspirée par le tourbillon des lignes du ciel. L'œuvre est considérée comme l'une des premières représentations de l'angoisse existentielle moderne.",
-    tags: ["angoisse", "existentiel", "expressionnisme", "nature", "cri", "Norvège", "symbolisme", "pastel"]
-  },
-  {
-    id: 5,
-    title: "Les Nymphéas",
-    artist: "Claude Monet",
-    date: "1906",
-    movement: "Impressionnisme",
-    museum: "Art Institute of Chicago",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/1280px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg",
-    description: "Série de 250 peintures réalisées entre 1896 et 1926 dans le jardin aquatique que Monet avait fait créer à Giverny. Cette version de 1906, conservée à Chicago, est l'une des plus lumineuses de la série. Monet y pousse l'impressionnisme à ses limites : la surface du tableau se confond avec la surface de l'eau, abolissant toute perspective traditionnelle. Les grandes décorations de l'Orangerie à Paris, offertes à l'État en 1922, seront considérées comme le testament artistique du peintre.",
-    tags: ["eau", "nénuphars", "Giverny", "jardin", "reflets", "lumière", "série", "huile sur toile", "France"]
-  },
-  {
-    id: 6,
-    title: "La Persistance de la mémoire",
-    artist: "Salvador Dalí",
-    date: "1931",
-    movement: "Surréalisme",
-    museum: "MoMA, New York",
-    image: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",
-    description: "Peint en seulement deux heures selon l'artiste, ce tableau de petit format (24 × 33 cm) est l'une des icônes du surréalisme. Les montres molles, déformées par la chaleur ou la pensée, y évoquent la relativité du temps selon Dalí influencé par Einstein. Le paysage est celui de la Costa Brava catalane, fidèlement rendu, contrastant avec les éléments oniriques au premier plan. L'œuvre introduit ce que Dalí nommait sa « méthode paranoïa-critique » : la mise en image minutieuse d'hallucinations.",
-    tags: ["temps", "rêve", "montres", "surréalisme", "Catalogne", "petit format", "onirique", "Espagne"]
-  },
-  {
-    id: 7,
-    title: "La Liberté guidant le peuple",
-    artist: "Eugène Delacroix",
-    date: "1830",
-    movement: "Romantisme",
-    museum: "Musée du Louvre, Paris",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg/1280px-Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg",
-    description: "Commencée dès le 20 septembre 1830, quelques semaines après les Trois Glorieuses qui renversent Charles X, la toile est exposée au Salon de 1831 où l'État l'achète immédiatement. La figure allégorique de la Liberté, drapeau tricolore à la main, enjambe des corps en avançant vers le spectateur — mêlant réalisme et allégorie dans une composition pyramidale. Elle incarne la lutte du peuple face à la monarchie et demeure l'un des symboles politiques les plus puissants de l'histoire de l'art.",
-    tags: ["révolution", "liberté", "France", "romantisme", "allégorie", "politique", "1830", "drapeau", "Louvre"]
-  },
-  {
-    id: 8,
-    title: "Un dimanche à la Grande Jatte",
-    artist: "Georges Seurat",
-    date: "1884 – 1886",
-    movement: "Néo-impressionnisme / Pointillisme",
-    museum: "Art Institute of Chicago",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/1280px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg",
-    description: "Deux ans de travail, plus de 60 études préparatoires : la Grande Jatte est la démonstration magistrale du pointillisme que Seurat nomme « chromoluminarisme ». Juxtaposant des milliers de petites touches de couleurs pures selon les théories scientifiques de Chevreul et Rood sur la perception des couleurs, il représente des bourgeois parisiens se reposant sur l'île de la Grande Jatte, à Asnières. La composition rigoureuse, presque hiératique, contraste avec la légèreté des scènes de plein air.",
-    tags: ["pointillisme", "Seine", "loisirs", "bourgeoisie", "lumière", "couleur", "Paris", "scientifique", "plein air"]
-  },
-  {
-    id: 9,
-    title: "Les Demoiselles d'Avignon",
-    artist: "Pablo Picasso",
-    date: "1907",
-    movement: "Cubisme / Proto-cubisme",
-    museum: "MoMA, New York",
-    image: "https://upload.wikimedia.org/wikipedia/en/4/4c/Les_Demoiselles_d%27Avignon.jpg",
-    description: "Considéré comme le tableau fondateur du cubisme, ce grand format (244 × 234 cm) fut gardé roulé dans l'atelier de Picasso pendant plusieurs années avant d'être exposé. L'artiste y représente cinq figures féminines — deux aux visages influencés par l'art ibérique, deux aux masques inspirés de l'art africain et océanien découvert au Trocadéro. La rupture avec la perspective traditionnelle, la multiplicité des points de vue simultanés et la fragmentation des corps inaugurent l'ère de l'art moderne.",
-    tags: ["cubisme", "figures", "art africain", "modernité", "rupture", "grand format", "Barcelone", "nu", "révolution"]
-  },
-  {
-    id: 10,
-    title: "La Jeune Fille à la perle",
-    artist: "Johannes Vermeer",
-    date: "vers 1665",
-    movement: "Âge d'or néerlandais / Baroque",
-    museum: "Mauritshuis, La Haye",
-    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg",
-    description: "Souvent surnommée la « Joconde du Nord », cette peinture appartient au genre de la « tronie » — représentation d'un type ou caractère plutôt que d'un portrait identifiable. La jeune femme tourne la tête vers l'observateur dans un geste soudain, ses lèvres légèrement entrouverte. La perle, dont la taille semble trop grande pour être authentique, captive le regard. Vermeer maîtrise ici son jeu de lumière caractéristique : un fond sombre absolu qui fait rayonner le visage et le turban bleu-or.",
-    tags: ["perle", "tronie", "Pays-Bas", "baroque", "lumière", "portrait", "turban", "jeune femme", "Vermeer"]
-  }
+const DATA = [
+  {id:1,title:"La Joconde",artist:"Léonard de Vinci",date:"1503–1519",movement:"Renaissance",museum:"Musée du Louvre, Paris",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/600px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",description:"Chef-d'œuvre de la Renaissance, ce portrait emploie le sfumato pour créer l'ambiguïté du célèbre sourire. De Vinci révolutionne le genre du portrait en orientant le modèle vers le spectateur, créant un dialogue intime et universel.",tags:["portrait","sfumato","Renaissance","Louvre","Italie"]},
+  {id:2,title:"La Nuit étoilée",artist:"Vincent van Gogh",date:"1889",movement:"Post-impressionnisme",museum:"MoMA, New York",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg",description:"Peinte depuis l'asile de Saint-Rémy-de-Provence, les coups de pinceau tourbillonnants donnent au ciel un mouvement cosmique hallucinatoire. L'une des peintures les plus reconnaissables du monde.",tags:["nuit","étoiles","tourbillons","expressionnisme","Provence"]},
+  {id:3,title:"Guernica",artist:"Pablo Picasso",date:"1937",movement:"Cubisme",museum:"Musée Reina Sofía, Madrid",image:"https://upload.wikimedia.org/wikipedia/en/7/74/PicassoGuernica.jpg",description:"Réponse au bombardement de Guernica, cette huile monumentale en noir et blanc fragmente corps humains en plans cubistes pour exprimer l'horreur de la guerre. Symbole universel de l'anti-guerre.",tags:["guerre","Espagne","cubisme","noir et blanc","tragédie"]},
+  {id:4,title:"Le Cri",artist:"Edvard Munch",date:"1893",movement:"Expressionnisme",museum:"Musée National, Oslo",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg",description:"La figure déshumanisée, aux traits liquéfiés, semble aspirée par le tourbillon du ciel. L'une des premières représentations de l'angoisse existentielle moderne.",tags:["angoisse","expressionnisme","Norvège","symbolisme","pastel"]},
+  {id:5,title:"Les Nymphéas",artist:"Claude Monet",date:"1906",movement:"Impressionnisme",museum:"Art Institute of Chicago",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg/1280px-Claude_Monet_-_Water_Lilies_-_1906%2C_Ryerson.jpg",description:"Monet pousse l'impressionnisme à ses limites dans son jardin de Giverny : la surface du tableau se confond avec l'eau, abolissant toute perspective traditionnelle.",tags:["eau","nénuphars","Giverny","lumière","reflets"]},
+  {id:6,title:"La Persistance de la mémoire",artist:"Salvador Dalí",date:"1931",movement:"Surréalisme",museum:"MoMA, New York",image:"https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg",description:"Les montres molles évoquent la relativité du temps selon Dalí influencé par Einstein. Peint en deux heures, ce petit format est une icône absolue du surréalisme.",tags:["temps","montres","rêve","surréalisme","Catalogne"]},
+  {id:7,title:"La Liberté guidant le peuple",artist:"Eugène Delacroix",date:"1830",movement:"Romantisme",museum:"Musée du Louvre, Paris",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg/1280px-Eug%C3%A8ne_Delacroix_-_La_libert%C3%A9_guidant_le_peuple.jpg",description:"La figure allégorique de la Liberté enjambe des corps en avançant vers le spectateur. Symbole de la lutte du peuple face à la monarchie, peint après les Trois Glorieuses.",tags:["révolution","liberté","France","romantisme","allégorie"]},
+  {id:8,title:"Un dimanche à la Grande Jatte",artist:"Georges Seurat",date:"1884–1886",movement:"Néo-impressionnisme",museum:"Art Institute of Chicago",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/1280px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg",description:"Démonstration magistrale du pointillisme : des milliers de touches de couleurs pures juxtaposées selon les théories scientifiques de la perception des couleurs.",tags:["pointillisme","Seine","loisirs","Paris","plein air"]},
+  {id:9,title:"Les Demoiselles d'Avignon",artist:"Pablo Picasso",date:"1907",movement:"Cubisme",museum:"MoMA, New York",image:"https://upload.wikimedia.org/wikipedia/en/4/4c/Les_Demoiselles_d%27Avignon.jpg",description:"Tableau fondateur du cubisme : cinq figures dont les visages sont influencés par l'art ibérique et africain. La rupture avec la perspective inaugure l'ère de l'art moderne.",tags:["cubisme","modernité","art africain","MoMA","révolution"]},
+  {id:10,title:"La Jeune Fille à la perle",artist:"Johannes Vermeer",date:"vers 1665",movement:"Baroque",museum:"Mauritshuis, La Haye",image:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/1665_Girl_with_a_Pearl_Earring.jpg/800px-1665_Girl_with_a_Pearl_Earring.jpg",description:"Surnommée la Joconde du Nord, cette tronie met en scène une jeune femme dont le regard capte le spectateur. Vermeer y déploie son jeu de lumière sur fond sombre absolu.",tags:["perle","baroque","Pays-Bas","lumière","portrait"]}
 ];
 
-// ─────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────
-let artworks = [...BASE_ARTWORKS];
-let filteredArtworks = [...artworks];
-let currentIndex = 0;
-let activeFilter = 'all';
-let searchQuery = '';
+let artworks=[...DATA], filtered=[...DATA], cur=0, activeF='all', sq='';
 
-// ─────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────
-function init() {
-  buildFilters();
-  renderCarousel();
-  updateNav();
-  updateCounter();
-}
-
-// ─────────────────────────────────────────────
-// FILTERS
-// ─────────────────────────────────────────────
-function buildFilters() {
-  const movements = [...new Set(artworks.map(a => a.movement.split('/')[0].trim()))].sort();
-  const bar = document.getElementById('filtersBar');
-  // Keep the "all" button, add movements
-  const existing = bar.querySelectorAll('[data-filter]:not([data-filter="all"])');
-  existing.forEach(e => e.remove());
-
-  movements.forEach(m => {
-    const btn = document.createElement('button');
-    btn.className = 'filter-chip';
-    btn.dataset.filter = m;
-    btn.textContent = m;
-    btn.onclick = () => setFilter(m, btn);
-    bar.appendChild(btn);
+// ── BUILD FILTERS ──
+function buildFilters(){
+  const mvs=[...new Set(artworks.map(a=>a.movement))].sort();
+  const bar=document.getElementById('filtersBar');
+  bar.querySelectorAll('[data-f]:not([data-f="all"])').forEach(e=>e.remove());
+  const countEl=document.getElementById('countLabel');
+  mvs.forEach(m=>{
+    const b=document.createElement('button');
+    b.className='chip';b.dataset.f=m;b.textContent=m;
+    b.onclick=()=>setFilter(m,b);
+    bar.insertBefore(b,countEl);
   });
 }
 
-function setFilter(filter, el) {
-  activeFilter = filter;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+function setFilter(f,el){
+  activeF=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   applyFilters();
 }
 
-function handleSearch() {
-  searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
-  applyFilters();
-}
+function doSearch(){sq=document.getElementById('searchInput').value.toLowerCase().trim();applyFilters()}
 
-function applyFilters() {
-  filteredArtworks = artworks.filter(a => {
-    const matchMovement = activeFilter === 'all' || a.movement.toLowerCase().includes(activeFilter.toLowerCase());
-    const matchSearch = !searchQuery ||
-      a.title.toLowerCase().includes(searchQuery) ||
-      a.artist.toLowerCase().includes(searchQuery) ||
-      a.movement.toLowerCase().includes(searchQuery) ||
-      a.tags.some(t => t.toLowerCase().includes(searchQuery)) ||
-      a.description.toLowerCase().includes(searchQuery);
-    return matchMovement && matchSearch;
+function applyFilters(){
+  filtered=artworks.filter(a=>{
+    const mM=activeF==='all'||a.movement===activeF;
+    const mS=!sq||[a.title,a.artist,a.movement,...a.tags,a.description].some(s=>s.toLowerCase().includes(sq));
+    return mM&&mS;
   });
-
-  currentIndex = 0;
-  renderCarousel();
-  updateNav();
-  updateCounter();
-
-  const noRes = document.getElementById('noResults');
-  noRes.classList.toggle('show', filteredArtworks.length === 0);
+  cur=Math.min(cur,Math.max(filtered.length-1,0));
+  render();
+  document.getElementById('noRes').classList.toggle('show',filtered.length===0);
+  document.getElementById('countLabel').textContent=filtered.length+' œuvre'+(filtered.length>1?'s':'');
 }
 
-// ─────────────────────────────────────────────
-// CAROUSEL
-// ─────────────────────────────────────────────
-const CARD_WIDTH = 704; // card width + gap
+// ── RENDER ──
+function render(){
+  const track=document.getElementById('track');
+  track.innerHTML='';
+  const dots=document.getElementById('dotsBar');
+  dots.innerHTML='';
 
-function renderCarousel() {
-  const track = document.getElementById('carouselTrack');
-  track.innerHTML = '';
-
-  const dots = document.getElementById('dotsBar');
-  dots.innerHTML = '';
-
-  filteredArtworks.forEach((art, i) => {
-    // Card
-    const wrapper = document.createElement('div');
-    wrapper.className = 'card-wrapper';
-    wrapper.dataset.index = i;
-    wrapper.innerHTML = buildCardHTML(art);
-    wrapper.onclick = () => {
-      if (i !== currentIndex) navigate(i - currentIndex);
-    };
-    track.appendChild(wrapper);
-
-    // Dot
-    const dot = document.createElement('div');
-    dot.className = 'dot';
-    dot.onclick = () => goTo(i);
-    dots.appendChild(dot);
+  filtered.forEach((art,i)=>{
+    const w=document.createElement('div');
+    w.className='cw';w.dataset.i=i;
+    w.innerHTML=cardHTML(art);
+    w.onclick=()=>{if(i!==cur){cur=i;updatePositions()}};
+    track.appendChild(w);
+    const d=document.createElement('div');
+    d.className='dot';d.onclick=()=>{cur=i;updatePositions()};
+    dots.appendChild(d);
   });
-
-  positionCarousel();
+  updatePositions();
 }
 
-function buildCardHTML(art) {
-  const tagsHTML = art.tags.map(t =>
-    `<span class="tag" onclick="quickFilter('${t}', event)">${t}</span>`
-  ).join('');
-
-  return `
-    <div class="card">
-      <div class="card-image-section" onclick="openLightbox('${art.image}', '${escapeAttr(art.title)} — ${escapeAttr(art.artist)}, ${art.date}', event)">
-        <img src="${art.image}" alt="${escapeAttr(art.title)}" loading="lazy">
-        <div class="img-overlay"></div>
-        <div class="movement-badge">${art.movement.split('/')[0].trim()}</div>
-        <div class="zoom-hint">Voir en grand</div>
+function cardHTML(art){
+  const tags=art.tags.map(t=>`<span class="tag" onclick="quickTag('${t}',event)">${t}</span>`).join('');
+  return`<div class="card">
+    <div class="card-img" onclick="openLb('${art.image}','${art.title} — ${art.artist}, ${art.date}',event)">
+      <img src="${art.image}" alt="${art.title}" loading="lazy">
+      <div class="img-gradient"></div>
+      <div class="badge">${art.movement}</div>
+      <button class="zoom-btn" onclick="openLb('${art.image}','${art.title} — ${art.artist}, ${art.date}',event)">⤢ Agrandir</button>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="card-title">${art.title}</div>
+        <div class="card-year">${art.date}</div>
       </div>
-      <div class="card-text-section">
-        <div class="card-header-row">
-          <div class="card-title">${art.title}</div>
-          <div class="card-date">${art.date}</div>
-        </div>
-        <div class="card-artist">${art.artist} &mdash; <em style="color:var(--text-dim);font-style:normal;font-size:13px">${art.museum}</em></div>
-        <hr class="card-divider">
-        <div class="card-description">${art.description}</div>
-        <div class="card-tags">${tagsHTML}</div>
-      </div>
-    </div>`;
+      <div class="card-artist">${art.artist} <em>· ${art.museum}</em></div>
+      <hr class="divider">
+      <div class="card-desc">${art.description}</div>
+      <div class="card-tags">${tags}</div>
+    </div>
+  </div>`;
 }
 
-function escapeAttr(s) {
-  return s.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+function posClass(diff){
+  if(diff===0)return'pos-active';
+  if(diff===-1)return'pos-left';
+  if(diff===1)return'pos-right';
+  if(diff===-2)return'pos-far-left';
+  if(diff===2)return'pos-far-right';
+  return'pos-hidden';
 }
 
-function positionCarousel() {
-  const track = document.getElementById('carouselTrack');
-  const wrappers = track.querySelectorAll('.card-wrapper');
-  const dots = document.getElementById('dotsBar').querySelectorAll('.dot');
-
-  wrappers.forEach((w, i) => {
-    const diff = i - currentIndex;
-    w.className = 'card-wrapper';
-    if (diff === 0) w.classList.add('active');
-    else if (Math.abs(diff) === 1) w.classList.add('mid');
-    else if (Math.abs(diff) === 2) w.classList.add('near');
-    else w.classList.add('side');
+function updatePositions(){
+  document.querySelectorAll('.cw').forEach((w,i)=>{
+    w.className='cw '+posClass(i-cur);
   });
-
-  dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
-
-  const offset = currentIndex * CARD_WIDTH;
-  track.style.transform = `translateX(${-offset}px)`;
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+  // center track on active card
+  const CARD=708;
+  document.getElementById('track').style.transform=`translateX(${-cur*CARD}px)`;
 }
 
-function navigate(delta) {
-  const newIndex = currentIndex + delta;
-  if (newIndex < 0 || newIndex >= filteredArtworks.length) return;
-  currentIndex = newIndex;
-  positionCarousel();
-  updateNav();
-}
+// ── DRAG / SWIPE ──
+let drag={active:false,startX:0,curX:0,vel:0,lastX:0,lastT:0};
+const stage=document.getElementById('stage');
 
-function goTo(i) {
-  currentIndex = i;
-  positionCarousel();
-  updateNav();
-}
-
-function updateNav() {
-  document.getElementById('prevBtn').disabled = currentIndex <= 0;
-  document.getElementById('nextBtn').disabled = currentIndex >= filteredArtworks.length - 1;
-}
-
-function updateCounter() {
-  document.getElementById('counter').textContent =
-    `${filteredArtworks.length} œuvre${filteredArtworks.length > 1 ? 's' : ''}`;
-}
-
-function quickFilter(tag, e) {
-  e.stopPropagation();
-  document.getElementById('searchInput').value = tag;
-  searchQuery = tag.toLowerCase();
-  activeFilter = 'all';
-  document.querySelectorAll('.filter-chip').forEach(c =>
-    c.classList.toggle('active', c.dataset.filter === 'all')
-  );
-  applyFilters();
-}
-
-// ─────────────────────────────────────────────
-// LIGHTBOX
-// ─────────────────────────────────────────────
-function openLightbox(src, caption, e) {
-  e.stopPropagation();
-  const lb = document.getElementById('lightbox');
-  document.getElementById('lightboxImg').src = src;
-  document.getElementById('lightboxCaption').textContent = caption;
-  lb.classList.add('open');
-}
-
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-}
-
-// ─────────────────────────────────────────────
-// MODAL — ADD FICHE
-// ─────────────────────────────────────────────
-function openModal() {
-  document.getElementById('modalOverlay').classList.add('open');
-}
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  ['fTitle','fArtist','fDate','fMovement','fImage','fDesc','fTags','fMuseum'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
-}
-
-function saveCard() {
-  const title = document.getElementById('fTitle').value.trim();
-  const artist = document.getElementById('fArtist').value.trim();
-  const date = document.getElementById('fDate').value.trim();
-  const movement = document.getElementById('fMovement').value.trim();
-
-  if (!title || !artist || !date || !movement) {
-    alert('Veuillez remplir les champs obligatoires (*).');
-    return;
+stage.addEventListener('mousedown',e=>{
+  drag.active=true;drag.startX=e.clientX;drag.curX=e.clientX;
+  drag.vel=0;drag.lastX=e.clientX;drag.lastT=Date.now();
+  stage.style.cursor='grabbing';
+});
+window.addEventListener('mousemove',e=>{
+  if(!drag.active)return;
+  const now=Date.now();
+  drag.vel=(e.clientX-drag.lastX)/(now-drag.lastT||1);
+  drag.lastX=e.clientX;drag.lastT=now;
+  drag.curX=e.clientX;
+});
+window.addEventListener('mouseup',e=>{
+  if(!drag.active)return;
+  drag.active=false;stage.style.cursor='grab';
+  const dx=e.clientX-drag.startX;
+  const THRESHOLD=50;
+  if(Math.abs(dx)>THRESHOLD||Math.abs(drag.vel)>0.6){
+    const dir=dx<0?1:-1;
+    const steps=Math.min(Math.ceil(Math.abs(drag.vel)/0.8),2);
+    move(dir*steps);
   }
-
-  const newCard = {
-    id: Date.now(),
-    title,
-    artist,
-    date,
-    movement,
-    museum: document.getElementById('fMuseum').value.trim() || 'Collection privée',
-    image: document.getElementById('fImage').value.trim() ||
-      `https://via.placeholder.com/800x500/1c1912/c9a85c?text=${encodeURIComponent(title)}`,
-    description: document.getElementById('fDesc').value.trim() || 'Aucune description disponible.',
-    tags: document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean)
-  };
-
-  artworks.push(newCard);
-  buildFilters();
-  applyFilters();
-  closeModal();
-  goTo(filteredArtworks.length - 1);
-}
-
-// ─────────────────────────────────────────────
-// KEYBOARD NAV
-// ─────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (document.getElementById('modalOverlay').classList.contains('open')) return;
-  if (document.getElementById('searchInput') === document.activeElement) return;
-  if (e.key === 'ArrowLeft') navigate(-1);
-  if (e.key === 'ArrowRight') navigate(1);
-  if (e.key === 'Escape') closeLightbox();
 });
 
-// Close modal when clicking overlay
-document.getElementById('modalOverlay').onclick = closeModal;
+// Touch
+let touchStartX=0;
+stage.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].clientX},{passive:true});
+stage.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchStartX;
+  if(Math.abs(dx)>40)move(dx<0?1:-1);
+},{passive:true});
 
-// ─────────────────────────────────────────────
-// TOUCH / SWIPE
-// ─────────────────────────────────────────────
-let touchStartX = 0;
-document.querySelector('body').addEventListener('touchstart', e => {
-  touchStartX = e.changedTouches[0].clientX;
-}, { passive: true });
-document.querySelector('body').addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 50) navigate(dx < 0 ? 1 : -1);
-}, { passive: true });
+// Mouse wheel horizontal scroll
+stage.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+  if(Math.abs(delta)>20)move(delta>0?1:-1);
+},{passive:false});
 
-// ─────────────────────────────────────────────
-// START
-// ─────────────────────────────────────────────
-init();
+let moveThrottle=0;
+function move(d){
+  const now=Date.now();
+  if(now-moveThrottle<350)return;
+  moveThrottle=now;
+  const n=cur+d;
+  if(n>=0&&n<filtered.length){cur=n;updatePositions();}
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('modalBg').classList.contains('open'))return;
+  if(document.activeElement===document.getElementById('searchInput'))return;
+  if(e.key==='ArrowLeft')move(-1);
+  if(e.key==='ArrowRight')move(1);
+  if(e.key==='Escape')closeLb();
+});
+
+// ── LIGHTBOX ──
+function openLb(src,cap,e){e&&e.stopPropagation();
+  document.getElementById('lbImg').src=src;
+  document.getElementById('lbCap').textContent=cap;
+  document.getElementById('lb').classList.add('open');
+}
+function closeLb(){document.getElementById('lb').classList.remove('open')}
+
+// ── MODAL ──
+function openModal(){document.getElementById('modalBg').classList.add('open')}
+function closeModal(){
+  document.getElementById('modalBg').classList.remove('open');
+  ['fT','fA','fD','fM','fI','fDesc','fTg','fMu'].forEach(id=>document.getElementById(id).value='');
+}
+document.getElementById('modalBg').onclick=closeModal;
+
+function saveCard(){
+  const t=document.getElementById('fT').value.trim();
+  const a=document.getElementById('fA').value.trim();
+  const d=document.getElementById('fD').value.trim();
+  const m=document.getElementById('fM').value.trim();
+  if(!t||!a||!d||!m){alert('Champs obligatoires manquants.');return;}
+  artworks.push({id:Date.now(),title:t,artist:a,date:d,movement:m,
+    museum:document.getElementById('fMu').value.trim()||'Collection privée',
+    image:document.getElementById('fI').value.trim()||`https://placehold.co/800x400/e8e4f0/7c6fcd?text=${encodeURIComponent(t)}`,
+    description:document.getElementById('fDesc').value.trim()||'',
+    tags:document.getElementById('fTg').value.split(',').map(s=>s.trim()).filter(Boolean)
+  });
+  buildFilters();applyFilters();closeModal();cur=filtered.length-1;updatePositions();
+}
+
+function quickTag(t,e){
+  e.stopPropagation();
+  document.getElementById('searchInput').value=t;
+  sq=t.toLowerCase();activeF='all';
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.f==='all'));
+  applyFilters();
+}
+
+// ── INIT ──
+buildFilters();
+applyFilters();
 </script>
 </body>
 </html>
